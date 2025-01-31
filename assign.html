@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assign Players</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #1e1e1e;
+            color: white;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        .players-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .player-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 5px;
+            width: 100%;
+            transition: 0.3s;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        button:disabled {
+            background: gray;
+            cursor: not-allowed;
+        }
+        .actions {
+            margin-top: 20px;
+        }
+        .actions button {
+            background: #f44336;
+        }
+        .actions button:hover {
+            background: #d32f2f;
+        }
+        a {
+            display: inline-block;
+            margin-top: 20px;
+            color: #00c8ff;
+            text-decoration: none;
+            font-size: 18px;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+    <script>
+        let players = [
+            "Player 1", "Player 2", "Player 3", "Player 4", "Player 5", "Player 6", "Player 7", "Player 8",
+            "Player 9", "Player 10", "Player 11", "Player 12", "Player 13", "Player 14", "Player 15", "Player 16",
+            "Player 17", "Player 18", "Player 19", "Player 20", "Player 21", "Player 22", "Player 23", "Player 24",
+            "Player 25", "Player 26", "Player 27", "Player 28", "Player 29", "Player 30", "Player 31", "Player 32"
+        ];
+        let assignedPlayers = JSON.parse(localStorage.getItem("assignedPlayers")) || Array(8).fill().map(() => Array(4).fill(null));
+        let assignmentHistory = JSON.parse(localStorage.getItem("assignmentHistory")) || [];
+        let currentIndex = assignedPlayers.flat().filter(Boolean).length;
+
+        function assignPlayer(name) {
+            if (currentIndex >= 32) return;
+            let row = Math.floor(currentIndex / 4);
+            let col = currentIndex % 4;
+            assignedPlayers[row][col] = name;
+            assignmentHistory.push({ row, col, name });
+            localStorage.setItem("assignedPlayers", JSON.stringify(assignedPlayers));
+            localStorage.setItem("assignmentHistory", JSON.stringify(assignmentHistory));
+            window.dispatchEvent(new Event("storage"));
+            document.getElementById(`btn-${name}`).disabled = true;
+            currentIndex++;
+        }
+
+        function undoAssignment() {
+            if (assignmentHistory.length === 0) return;
+            let lastAssignment = assignmentHistory.pop();
+            assignedPlayers[lastAssignment.row][lastAssignment.col] = null;
+            localStorage.setItem("assignedPlayers", JSON.stringify(assignedPlayers));
+            localStorage.setItem("assignmentHistory", JSON.stringify(assignmentHistory));
+            window.dispatchEvent(new Event("storage"));
+            document.getElementById(`btn-${lastAssignment.name}`).disabled = false;
+            currentIndex--;
+        }
+
+        function resetAssignments() {
+            assignedPlayers = Array(8).fill().map(() => Array(4).fill(null));
+            assignmentHistory = [];
+            localStorage.setItem("assignedPlayers", JSON.stringify(assignedPlayers));
+            localStorage.setItem("assignmentHistory", JSON.stringify(assignmentHistory));
+            window.dispatchEvent(new Event("storage"));
+            players.forEach(player => {
+                let btn = document.getElementById(`btn-${player}`);
+                if (btn) btn.disabled = false;
+            });
+            currentIndex = 0;
+        }
+
+        window.onload = function() {
+            let assignedPlayers = JSON.parse(localStorage.getItem("assignedPlayers")) || Array(8).fill().map(() => Array(4).fill(null));
+            assignedPlayers.flat().forEach(player => {
+                if (player) {
+                    document.getElementById(`btn-${player}`).disabled = true;
+                }
+            });
+        };
+    </script>
+</head>
+<body>
+    <h1>Assign Players</h1>
+    
+    <div class="players-container">
+        <script>
+            players.forEach(player => {
+                document.write(`
+                    <div class="player-card">
+                        <p>${player}</p>
+                        <button id="btn-${player}" onclick="assignPlayer('${player}')">Assign</button>
+                    </div>
+                `);
+            });
+        </script>
+    </div>
+
+    <div class="actions">
+        <button onclick="undoAssignment()">Undo Last Assignment</button>
+        <button onclick="resetAssignments()">Reset All Assignments</button>
+    </div>
+
+    <a href="index.html" target="_blank">Back to Tournament</a>
+</body>
+</html>
