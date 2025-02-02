@@ -20,8 +20,9 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 10px;
-            max-width: 600px;
+            max-width: 900px;
             margin: 0 auto;
+            grid-template-columns: repeat(6, 1fr); /* Updated to 6 columns */
         }
         .player-card {
             background: rgba(255, 255, 255, 0.1);
@@ -103,17 +104,25 @@
         }
 
         function resetAssignments() {
-            assignedPlayers = Array(8).fill().map(() => Array(4).fill(null));
-            assignmentHistory = [];
-            localStorage.setItem("assignedPlayers", JSON.stringify(assignedPlayers));
-            localStorage.setItem("assignmentHistory", JSON.stringify(assignmentHistory));
-            window.dispatchEvent(new Event("storage"));
-            players.forEach(player => {
-                let btn = document.getElementById(`btn-${player}`);
-                if (btn) btn.disabled = false;
-            });
-            currentIndex = 0;
-        }
+    if (!confirm("Are you sure you want to reset all assignments?")) return;
+    
+    assignedPlayers = Array(8).fill().map(() => Array(4).fill(null));
+    assignmentHistory = [];
+    
+    localStorage.setItem("assignedPlayers", JSON.stringify(assignedPlayers));
+    localStorage.setItem("assignmentHistory", JSON.stringify(assignmentHistory));
+    
+    window.dispatchEvent(new Event("storage"));
+    
+    players.forEach(player => {
+        let btn = document.getElementById(`btn-${player}`);
+        if (btn) btn.disabled = false;
+    });
+    
+    currentIndex = 0;
+}
+
+        
 
         window.onload = function() {
             let assignedPlayers = JSON.parse(localStorage.getItem("assignedPlayers")) || Array(8).fill().map(() => Array(4).fill(null));
@@ -126,7 +135,7 @@
     </script>
 </head>
 <body>
-    <h1>Assign Players</h1>
+    
     
     <div class="players-container">
         <script>
@@ -144,6 +153,8 @@
     <div class="actions">
         <button onclick="undoAssignment()">Undo Last Assignment</button>
         <button onclick="resetAssignments()">Reset All Assignments</button>
+        
+
     </div>
 
     <a href="index.html" target="_blank">Back to Tournament</a>
