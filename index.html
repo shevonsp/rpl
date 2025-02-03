@@ -42,13 +42,33 @@
             justify-content: center;
             align-items: center;
             border: 1px solid rgba(255, 255, 255, 0.3);
-            line-height: 2.4; /* Increased line height */
+            line-height: 1.8;
+        }
+
+        /* Alternating background colors for better readability */
+        .slot div {
+            width: 100%;
+            padding: 5px 10px;
+            text-align: left;
+        }
+
+        .slot div:nth-child(odd) {
+            background-color: rgba(255, 255, 255, 0.1); /* Light shade */
+        }
+
+        .slot div:nth-child(even) {
+            background-color: rgba(255, 255, 255, 0.2); /* Slightly darker shade */
+        }
+
+        /* Optional: Dotted line separator */
+        .slot div:not(:last-child) {
+            border-bottom: 1px dotted rgba(255, 255, 255, 0.3);
         }
 
         /* Ad spaces */
         .ad-space {
             position: fixed;
-            width: 200px; /* Adjust size as needed */
+            width: 200px;
             height: 600px;
             background-color: black;
             text-align: center;
@@ -81,7 +101,6 @@
             height: 100%;
             object-fit: cover;
         }
-
     </style>
     <script>
         function loadAssignedPlayers() {
@@ -89,7 +108,10 @@
             assignedPlayers.forEach((row, rowIndex) => {
                 let slot = document.getElementById(`slot-${rowIndex}`);
                 if (slot) {
-                    slot.innerHTML = row.filter(player => player).join('<br>') || '-';
+                    slot.innerHTML = row
+                        .filter(player => player)
+                        .map(player => `<div>${player}</div>`)
+                        .join('') || '-';
                 }
             });
         }
@@ -108,20 +130,18 @@
     <div class="ad-space ad-right">
         <img src="right.png" alt="Right Ad">
     </div>
-    <div class="ad-space ad-bottom">
-        <img src="btm.gif" alt="Bottom Ad">
-    </div>
+    
     
     <div class="grid-container">
         <script>
-            let teamLabels = ["Team A", "Team B", "Team C", "Team D", "Team E", "Team F", "Team G", "Team H"];
+            let teamLabels = ["Group A", "Group B", "Group C", "Group D", "Group E", "Group F", "Group G", "Group H"];
             teamLabels.forEach((team, index) => {
-                document.write(`
-                    <div>
+                document.write(
+                    `<div>
                         <div class="team">${team}</div>
                         <div id="slot-${index}" class="slot">-</div>
-                    </div>
-                `);
+                    </div>`
+                );
             });
         </script>
     </div>
@@ -130,7 +150,3 @@
     
 </body>
 </html>
-
-
-
-
