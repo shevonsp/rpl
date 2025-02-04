@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Match Fixtures</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            color: white;
+            background: url('bg2.jpg') no-repeat center center fixed; /* Replace with your background image URL */
+            background-size: cover;
+        }
+
+        .logo {
+            margin: 20px auto;
+            width: 150px;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* Two columns for tables */
+            grid-gap: 80px;
+            max-width: 1400px; /* Adjust as needed */
+            margin: 20px auto;
+        }
+
+        .grid-container > div {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .team {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .fixture-table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed; /* Equal column widths */
+        }
+
+        .fixture-table th, .fixture-table td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            width: 33.33%; /* Three equal columns */
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .fixture-table th {
+            background-color: rgba(0, 0, 0, 0.7);
+            font-weight: bold;
+        }
+
+        .vs-text { /* Style for "vs" text */
+            color: #ffc107; /* Example: A yellow/gold color */
+            font-weight: bold;
+            margin: 0 5px; /* Add some spacing around "vs" */
+        }
+    </style>
+    <script>
+        function loadAssignedPlayers() {
+            let assignedPlayers = JSON.parse(localStorage.getItem("assignedPlayers")) || Array(8).fill().map(() => Array(4).fill(null));
+
+            const fixturesData = [
+                {
+                    date: "15th February 2025",
+                    groups: ["Alpha", "Bravo", "Charlie"],
+                    matches: [
+                        ["A1", "A2", "C1", "C2", "E1", "E2"],
+                        ["A3", "A4", "C3", "C4", "E3", "E4"],
+                        ["B1", "B2", "D1", "D2", "F1", "F2"],
+                        ["B3", "B4", "D3", "D4", "F3", "F4"]
+                    ]
+                },
+                {
+                    date: "16th February 2025",
+                    groups: ["Echo", "Foxtrot", "Golf"],
+                    matches: [
+                        ["G1", "G2", "A1", "A3", "C1", "C3"],
+                        ["G3", "G4", "A2", "A4", "C2", "C4"],
+                        ["H1", "H2", "B1", "B3", "D1", "D3"],
+                        ["H3", "H4", "B2", "B4", "D2", "D4"]
+                    ]
+                },
+                {
+                    date: "22nd February 2025",
+                    groups: ["India", "Julliete", "Kilo"],
+                    matches: [
+                        ["E1", "E3", "G1", "G3", "A1", "A4"],
+                        ["E2", "E4", "G2", "G4", "A2", "A3"],
+                        ["F1", "F3", "H1", "H3", "B1", "B4"],
+                        ["F2", "F4", "H2", "H4", "B2", "B3"]
+                    ]
+                },
+                {
+                    date: "23rd February 2025",
+                    groups: ["Mike", "November", "Oscar"],
+                    matches: [
+                        ["C1", "C4", "E1", "E4", "G1", "G4"],
+                        ["C2", "C3", "E2", "E3", "G3", "G2"],
+                        ["D1", "D4", "F1", "F4", "H1", "H4"],
+                        ["D2", "D3", "F2", "F3", "H2", "H3"]
+                    ]
+                }
+            ];
+
+            fixturesData.forEach((fixtureDay, tableIndex) => {
+                let table = document.getElementById(`fixture-table-${tableIndex}`);
+                if (table) {
+                    table.innerHTML = ""; // Clear previous content
+
+                    // Add table header with group names
+                    let headerRow = table.insertRow();
+                    fixtureDay.groups.forEach(groupName => {
+                        let th = document.createElement('th');
+                        th.textContent = groupName;
+                        headerRow.appendChild(th);
+                    });
+
+                    fixtureDay.matches.forEach(matchRow => {
+                        let row = table.insertRow();
+                        for (let i = 0; i < 3; i++) {
+                            let cell = row.insertCell();
+
+                            let player1Group = matchRow[i * 2].substring(0, 1);
+                            let player1Number = parseInt(matchRow[i * 2].substring(1));
+                            let player2Group = matchRow[i * 2 + 1].substring(0, 1);
+                            let player2Number = parseInt(matchRow[i * 2 + 1].substring(1));
+
+                            let player1Index = (player1Group.charCodeAt(0) - 65) * 4 + player1Number - 1;
+                            let player2Index = (player2Group.charCodeAt(0) - 65) * 4 + player2Number - 1;
+
+                            const player1 = assignedPlayers[Math.floor(player1Index / 4)][player1Index % 4] || "-";
+                            const player2 = assignedPlayers[Math.floor(player2Index / 4)][player2Index % 4] || "-";
+
+                            cell.innerHTML = `${player1} <span class="vs-text">vs</span> ${player2}`;
+                        }
+                    });
+                }
+            });
+        }
+
+        window.addEventListener("storage", loadAssignedPlayers);
+        window.onload = loadAssignedPlayers;
+    </script>
+</head>
+<body>
+    <img src="logo.png" alt="Logo" class="logo">
+     
+    <h2 style="font-weight: bold; color: #ffc107;">MATCH FIXTURES</h2>
+    
+
+    <div class="grid-container">
+        <script>
+            const dates = ["15th February 2025", "16th February 2025", "22nd February 2025", "23rd February 2025"];
+
+            dates.forEach((date, index) => {
+                document.write(`
+                    <div>
+                        <div class="team">${date}</div>
+                        <table id="fixture-table-${index}" class="fixture-table"></table>
+                    </div>
+                `);
+            });
+        </script>
+    </div>
+
+</body>
+</html>
