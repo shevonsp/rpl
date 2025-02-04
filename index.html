@@ -22,14 +22,23 @@
         .grid-container {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            grid-gap: 20px;
-            max-width: 800px;
+            grid-gap: 80px;
+            max-width: 1200px;
             margin: 20px auto;
+        }
+
+
+        .grid-container > div {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
         .team {
             font-weight: bold;
-            margin-bottom: 5px;
+            margin-bottom: 10px;
+            
         }
 
         .slot {
@@ -43,6 +52,7 @@
             align-items: center;
             border: 1px solid rgba(255, 255, 255, 0.3);
             line-height: 1.8;
+            width: 100%;
         }
 
         /* Alternating background colors for better readability */
@@ -65,67 +75,38 @@
             border-bottom: 1px dotted rgba(255, 255, 255, 0.3);
         }
 
-        /* Ad spaces */
-        .ad-space {
-            position: fixed;
-            width: 200px;
-            height: 600px;
-            background-color: black;
-            text-align: center;
-        }
-
-        .ad-left {
-            left: 0;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-
-        .ad-right {
-            right: 0;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-
-        .ad-bottom {
-            position: fixed;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100%;
-            height: auto;
-            background-color: black;
-        }
-
-        .ad-space img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+        
     </style>
-    <script>
-        function loadAssignedPlayers() {
-            let assignedPlayers = JSON.parse(localStorage.getItem("assignedPlayers")) || Array(8).fill().map(() => Array(4).fill(null));
-            assignedPlayers.forEach((row, rowIndex) => {
-                let slot = document.getElementById(`slot-${rowIndex}`);
-                if (slot) {
-                    slot.innerHTML = row
-                        .filter(player => player)
-                        .map(player => `<div>${player}</div>`)
-                        .join('') || '-';
-                }
-            });
-        }
 
-        window.addEventListener("storage", loadAssignedPlayers);
-        window.onload = loadAssignedPlayers;
-    </script>
+
+
+<script>
+   function loadAssignedPlayers() {
+    let assignedPlayers = JSON.parse(localStorage.getItem("assignedPlayers")) || Array(8).fill().map(() => Array(4).fill(null));
+    assignedPlayers.forEach((row, rowIndex) => {
+        let slot = document.getElementById(`slot-${rowIndex}`);
+        if (slot) {
+            slot.innerHTML = ""; // Clear previous content of the slot
+
+            for (let i = 0; i < 4; i++) {
+                let playerName = assignedPlayers[rowIndex][i] || ""; // Get player name or empty string
+                // Add span with color to the number
+                slot.innerHTML += `<div><span style="color: #00FFFF; font-weight: bold;">${String.fromCharCode(65 + rowIndex)}${i + 1}.</span> ${playerName}</div>`; 
+            }
+        }
+    });
+}
+
+    window.addEventListener("storage", loadAssignedPlayers);
+    window.onload = loadAssignedPlayers;
+</script>
+
+
+
 </head>
 <body>
     <img src="logo.png" alt="Logo" class="logo">
 
-    
-    
-    
     <div class="grid-container">
         <script>
             let teamLabels = ["Group A", "Group B", "Group C", "Group D", "Group E", "Group F", "Group G", "Group H"];
